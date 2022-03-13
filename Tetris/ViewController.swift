@@ -19,8 +19,20 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         return controll
     }()
     
+    @objc func checkAction(sender : UITapGestureRecognizer) {
+        print("touch")
+        let tetris = TetrisEngine(arr)
+        tetris.start()
+    }
+    
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        let gesture = UITapGestureRecognizer(target: self, action:  #selector(self.checkAction))
+        sceneView.addGestureRecognizer(gesture)
+
+
         
         // Set the view's delegate
         sceneView.delegate = self
@@ -100,7 +112,6 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         var countHeight = 0
         while countHeight < 20 {
             var row : [SCNNode] = []
-            arr.append(row)
             countHeight += 1
             var length = anchor.center.x - ((Float(CGFloat(anchor.extent.x))/koef)*5)
             var count  = 0
@@ -119,6 +130,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
                 row.append(floorNode)
                 length += Float(CGFloat(anchor.extent.x))/koef
             }
+            arr.append(row)
             height += Float(CGFloat(anchor.extent.x))/koef
         }
         return a
