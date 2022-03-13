@@ -19,20 +19,40 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         return controll
     }()
     
+
+
+
+    @objc func swipeToRight(sender: UISwipeGestureRecognizer){
+        print("right")
+        tetris?.shiftToRight()
+    }
+    
+    
+    @objc func swipeToLeft(sender: UISwipeGestureRecognizer){
+        print("left")
+        tetris?.shiftToLeft()
+    }
+    
+    var tetris: TetrisEngine?
+    
     @objc func checkAction(sender : UITapGestureRecognizer) {
         print("touch")
-        let tetris = TetrisEngine(arr)
-        tetris.start()
+        tetris = TetrisEngine(arr)
+        tetris?.start()
     }
     
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        let swipeRight : UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(self.swipeToRight))
+        let swipeLeft : UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(self.swipeToLeft))
+        swipeLeft.direction = UISwipeGestureRecognizer.Direction.left
         let gesture = UITapGestureRecognizer(target: self, action:  #selector(self.checkAction))
         sceneView.addGestureRecognizer(gesture)
-
-
+        swipeRight.direction = UISwipeGestureRecognizer.Direction.right
+        sceneView.addGestureRecognizer(swipeRight)
+        sceneView.addGestureRecognizer(swipeLeft)
         
         // Set the view's delegate
         sceneView.delegate = self

@@ -19,6 +19,76 @@ class TetrisEngine {
         d = (19, 5)
     }
     
+    public func shiftToLeft(){
+        if a.1 == 0 || c.1 == 0{
+            return
+        }
+        boxes[a.0][a.1].geometry?.firstMaterial?.diffuse.contents = UIColor.clear
+        boxes[a.0][a.1].geometry?.firstMaterial?.diffuse.contents = UIImage(named: "box")
+        boxes[a.0][a.1].name = "empty"
+        boxes[b.0][b.1].geometry?.firstMaterial?.diffuse.contents = UIColor.clear
+        boxes[b.0][b.1].geometry?.firstMaterial?.diffuse.contents =  UIImage(named: "box")
+        boxes[b.0][b.1].name = "empty"
+        boxes[c.0][c.1].geometry?.firstMaterial?.diffuse.contents = UIColor.clear
+        boxes[c.0][c.1].geometry?.firstMaterial?.diffuse.contents = UIImage(named: "box")
+        boxes[c.0][c.1].name = "empty"
+        boxes[d.0][d.1].geometry?.firstMaterial?.diffuse.contents = UIColor.clear
+        boxes[d.0][d.1].geometry?.firstMaterial?.diffuse.contents =  UIImage(named: "box")
+        boxes[d.0][d.1].name = "empty"
+        a.1 -= 1
+        b.1 -= 1
+        c.1 -= 1
+        d.1 -= 1
+        boxes[a.0][a.1].geometry?.firstMaterial?.diffuse.contents = UIColor.red
+        boxes[a.0][a.1].name = "full"
+        print(String(a.0) + ":" + String(a.1) + " draw")
+        boxes[b.0][b.1].geometry?.firstMaterial?.diffuse.contents = UIColor.red
+        boxes[b.0][b.1].name = "full"
+        print(String(b.0) + ":" + String(b.1) + " draw")
+        boxes[c.0][c.1].geometry?.firstMaterial?.diffuse.contents = UIColor.red
+        boxes[c.0][c.1].name = "full"
+        print(String(c.0) + ":" + String(c.1) + " draw")
+        boxes[d.0][d.1].geometry?.firstMaterial?.diffuse.contents = UIColor.red
+        boxes[d.0][d.1].name = "full"
+        print(String(d.0) + ":" + String(d.1) + " draw")
+    }
+    
+    
+    
+    public func shiftToRight(){
+        if b.1 == 9 || d.1 == 9{
+            return
+        }
+        boxes[a.0][a.1].geometry?.firstMaterial?.diffuse.contents = UIColor.clear
+        boxes[a.0][a.1].geometry?.firstMaterial?.diffuse.contents = UIImage(named: "box")
+        boxes[a.0][a.1].name = "empty"
+        boxes[b.0][b.1].geometry?.firstMaterial?.diffuse.contents = UIColor.clear
+        boxes[b.0][b.1].geometry?.firstMaterial?.diffuse.contents =  UIImage(named: "box")
+        boxes[b.0][b.1].name = "empty"
+        boxes[c.0][c.1].geometry?.firstMaterial?.diffuse.contents = UIColor.clear
+        boxes[c.0][c.1].geometry?.firstMaterial?.diffuse.contents = UIImage(named: "box")
+        boxes[c.0][c.1].name = "empty"
+        boxes[d.0][d.1].geometry?.firstMaterial?.diffuse.contents = UIColor.clear
+        boxes[d.0][d.1].geometry?.firstMaterial?.diffuse.contents =  UIImage(named: "box")
+        boxes[d.0][d.1].name = "empty"
+        a.1 += 1
+        b.1 += 1
+        c.1 += 1
+        d.1 += 1
+        boxes[a.0][a.1].geometry?.firstMaterial?.diffuse.contents = UIColor.red
+        boxes[a.0][a.1].name = "full"
+        print(String(a.0) + ":" + String(a.1) + " draw")
+        boxes[b.0][b.1].geometry?.firstMaterial?.diffuse.contents = UIColor.red
+        boxes[b.0][b.1].name = "full"
+        print(String(b.0) + ":" + String(b.1) + " draw")
+        boxes[c.0][c.1].geometry?.firstMaterial?.diffuse.contents = UIColor.red
+        boxes[c.0][c.1].name = "full"
+        print(String(c.0) + ":" + String(c.1) + " draw")
+        boxes[d.0][d.1].geometry?.firstMaterial?.diffuse.contents = UIColor.red
+        boxes[d.0][d.1].name = "full"
+        print(String(d.0) + ":" + String(d.1) + " draw")
+    }
+    
     let semaphore = DispatchSemaphore(value: 1)
     var a, b, c, d : (Int, Int)
     public func start(){
