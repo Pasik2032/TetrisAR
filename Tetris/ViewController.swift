@@ -12,6 +12,12 @@ import ARKit
 class ViewController: UIViewController, ARSCNViewDelegate {
     
     @IBOutlet var sceneView: ARSCNView!
+    let koef: Float = 10
+    
+    var arr : [[SCNNode]] = [[]]
+    
+    var tetris: TetrisEngine?
+    
     
     let configuration: ARWorldTrackingConfiguration = {
         let controll = ARWorldTrackingConfiguration()
@@ -33,10 +39,13 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         tetris?.shiftToLeft()
     }
     
-    var tetris: TetrisEngine?
+   
     
     @objc func checkAction(sender : UITapGestureRecognizer) {
         print("touch")
+        if tetris != nil || arr == [[]] {
+            return
+        }
         tetris = TetrisEngine(arr)
         tetris?.start()
     }
@@ -122,9 +131,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     }
     
     
-    let koef: Float = 10
-    
-    var arr : [[SCNNode]] = [[]]
+
     
     func createFloorNode(anchor: ARPlaneAnchor) -> [SCNNode]{
         var a : [SCNNode] = []
