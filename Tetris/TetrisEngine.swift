@@ -18,6 +18,7 @@ class TetrisEngine {
         c = (19, 4)
         d = (19, 5)
     }
+    var a, b, c, d : (Int, Int)
     
     public func shiftToLeft(){
         if a.1 == 0 || c.1 == 0{
@@ -90,7 +91,7 @@ class TetrisEngine {
     }
     
     let semaphore = DispatchSemaphore(value: 1)
-    var a, b, c, d : (Int, Int)
+
     public func start(){
         let shap = randomShapes()
 
@@ -102,17 +103,35 @@ class TetrisEngine {
             c = (19, 4)
             d = (19, 5)
         case .I:
-            print("error")
+            a = (20, 4)
+            b = (19, 4)
+            c = (18, 4)
+            d = (17, 4)
         case .S:
-            print("error")
+            a = (19, 4)
+            b = (19, 5)
+            c = (18, 4)
+            d = (18, 3)
         case .Z:
-            print("error")
+            a = (19, 3)
+            b = (19, 4)
+            c = (18, 4)
+            d = (18, 5)
         case .L:
-            print("error")
+            a = (20, 4)
+            b = (19, 4)
+            c = (18, 4)
+            d = (18, 5)
         case .J:
-            print("error")
+            a = (20, 4)
+            b = (19, 4)
+            c = (18, 4)
+            d = (18, 3)
         case .T:
-            print("error")
+            a = (20, 4)
+            b = (20, 5)
+            c = (20, 6)
+            d = (19, 5)
         }
         if boxes[a.0][a.1].name == "full" || boxes[b.0][b.1].name == "full" || boxes[c.0][c.1].name == "full" || boxes[d.0][d.1].name == "full"{
             print("Game over")
@@ -178,6 +197,6 @@ class TetrisEngine {
     
     private func randomShapes() -> Shapes{
         let a = Int.random(in: 1...6)
-        return Shapes(rawValue: 0)!
+        return Shapes(rawValue: a)!
     }
 }
