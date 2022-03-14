@@ -9,6 +9,11 @@ import UIKit
 import SceneKit
 import ARKit
 
+protocol TetrisView{
+    func endGame(scope: Int, _ pos: SCNVector3)
+    func editScore(str: String)
+}
+
 class ViewController: UIViewController, ARSCNViewDelegate {
     
     @IBOutlet var sceneView: ARSCNView!
@@ -51,7 +56,9 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         if tetris != nil || arr == [[]] {
             return
         }
-        tetris = TetrisEngine(arr)
+        scoreLabel.text = "0"
+        gameOverLabel.removeFromSuperview()
+        tetris = TetrisEngine(arr, view: self)
         tetris?.start()
     }
     
@@ -61,20 +68,30 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     }
 
     
-    
+    let scoreLabel : UILabel = {
+        let control = UILabel()
+        control.textColor = .white
+        control.font = control.font.withSize(40)
+        control.text = String(0)
+        return control
+    }()
     
     override func viewDidLoad() {
+        
         super.viewDidLoad()
-        let swipeRight : UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(self.swipeToRight))
-        let swipeLeft : UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(self.swipeToLeft))
-        let swipeDown : UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(self.swipeToDown))
-        let swipeUp : UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(self.swipeToUp))
+        
+        let swipeRight  = UISwipeGestureRecognizer(target: self, action: #selector(self.swipeToRight))
+        let swipeLeft  = UISwipeGestureRecognizer(target: self, action: #selector(self.swipeToLeft))
+        let swipeDown  = UISwipeGestureRecognizer(target: self, action: #selector(self.swipeToDown))
+        let swipeUp  = UISwipeGestureRecognizer(target: self, action: #selector(self.swipeToUp))
+        let gesture = UITapGestureRecognizer(target: self, action:  #selector(self.checkAction))
+
         swipeUp.direction = UISwipeGestureRecognizer.Direction.up
         swipeDown.direction = UISwipeGestureRecognizer.Direction.down
         swipeLeft.direction = UISwipeGestureRecognizer.Direction.left
-        let gesture = UITapGestureRecognizer(target: self, action:  #selector(self.checkAction))
-        sceneView.addGestureRecognizer(gesture)
         swipeRight.direction = UISwipeGestureRecognizer.Direction.right
+        
+        sceneView.addGestureRecognizer(gesture)
         sceneView.addGestureRecognizer(swipeRight)
         sceneView.addGestureRecognizer(swipeLeft)
         sceneView.addGestureRecognizer(swipeDown)
@@ -83,14 +100,32 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         // Set the view's delegate
         sceneView.delegate = self
         
-        // Show statistics such as fps and timing information
-        sceneView.showsStatistics = true
+        let backgrond = UIView()
+        backgrond.backgroundColor = UIColor(red: 0, green: 0, blue: 0, alpha: 0.5)
+        sceneView.addSubview(backgrond)
+        backgrond.translatesAutoresizingMaskIntoConstraints = false
+        backgrond.topAnchor.constraint(equalTo: sceneView.topAnchor, constant: 40).isActive = true
+        backgrond.rightAnchor.constraint(equalTo: sceneView.rightAnchor, constant: -10).isActive = true
+        backgrond.heightAnchor.constraint(equalToConstant: 100).isActive = true
+        backgrond.widthAnchor.constraint(equalToConstant: 100).isActive = true
+        backgrond.layer.cornerRadius = 5
         
-        // Create a new scene
-        let scene = SCNScene(named: "art.scnassets/ship.scn")!
-        
-        // Set the scene to the view
-        sceneView.scene = scene
+        backgrond.addSubview(scoreLabel)
+        scoreLabel.translatesAutoresizingMaskIntoConstraints = false
+        scoreLabel.centerXAnchor.constraint(equalTo: backgrond.centerXAnchor).isActive = true
+        scoreLabel.centerYAnchor.constraint(equalTo: backgrond.centerYAnchor).isActive = true
+//        scoreLabel.topAnchor.constraint(equalTo: backgrond.topAnchor, constant: 25).isActive = true
+//        scoreLabel.leftAnchor.constraint(equalTo: backgrond.leftAnchor, constant: 45).isActive = true
+//        scoreLabel.heightAnchor.constraint(equalToConstant: 50).isActive = true
+//        scoreLabel.widthAnchor.constraint(equalToConstant: 50).isActive = true
+//        // Show statistics such as fps and timing information
+//        sceneView.showsStatistics = true
+//
+//        // Create a new scene
+//        let scene = SCNScene(named: "art.scnassets/ship.scn")!
+//
+//        // Set the scene to the view
+//        sceneView.scene = scene
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -98,7 +133,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         
         // Create a session configuration
         
-        sceneView.debugOptions = [.showWorldOrigin]
+//        sceneView.debugOptions = [.showWorldOrigin]
         
         // Run the view's session
         sceneView.session.run(configuration)
@@ -148,7 +183,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     }
     
     
-
+    var vec: SCNVector3?
     
     func createFloorNode(anchor: ARPlaneAnchor) -> [SCNNode]{
         var a : [SCNNode] = []
@@ -179,5 +214,38 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         }
         return a
     }
+    
+    let gameOverLabel: UILabel = {
+        let control = UILabel()
+        control.numberOfLines = 0
+        control.font = control.font.withSize(70)
+        control.translatesAutoresizingMaskIntoConstraints = false
+        return control
+    }()
 }
+
+
+extension ViewController: TetrisView{
+    func editScore(str: String) {
+        scoreLabel.text = str
+    }
+    
+    
+    
+    func endGame(scope: Int, _ pos: SCNVector3) {
+        print("func")
+        
+        gameOverLabel.text = "Game over\n Scope: " + String(scope)
+       
+        sceneView.addSubview(gameOverLabel)
+
+        gameOverLabel.centerXAnchor.constraint(equalTo: sceneView.centerXAnchor).isActive = true
+        gameOverLabel.centerYAnchor.constraint(equalTo: sceneView.centerYAnchor).isActive = true
+        tetris = nil
+    }
+    
+    
+}
+
+
 

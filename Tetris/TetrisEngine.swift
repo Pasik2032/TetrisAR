@@ -10,24 +10,49 @@ import ARKit
 
 class TetrisEngine {
     
+    private static let colors : [UIColor] = [
+        UIColor(red:1.00, green:0.23, blue:0.19, alpha:1.0),
+        UIColor(red:1.00, green:0.18, blue:0.33, alpha:1.0),
+        UIColor(red:1.00, green:0.58, blue:0.00, alpha:1.0),
+        UIColor(red:1.00, green:0.80, blue:0.00, alpha:1.0),
+        UIColor(red:0.35, green:0.34, blue:0.84, alpha:1.0),
+        UIColor(red:0.20, green:0.67, blue:0.86, alpha:1.0),
+        UIColor(red:0.56, green:0.56, blue:0.58, alpha:1.0)]
+    
+    
     let boxes: [[SCNNode]]
     var figure: [(Int, Int)]
     var color: UIColor = .yellow
     var speed: Float
     var timer: Timer?
-    var scope : Int = 0 {
+    public var scope : Int = 0 {
         didSet {
             speed -= 0.04
+            view.editScore(str: String(scope))
             print("new speed " + String(speed))
         }
     }
     var shap: Shapes
-    
-    init(_ boxes: [[SCNNode]] ) {
-        self.boxes = boxes
+    let view: TetrisView
+    init(_ boxes: [[SCNNode]], view: TetrisView ) {
+        self.boxes = TetrisEngine.clear(boxes)
         figure = [(20, 4), (20, 5), (19, 4), (19, 5)]
         speed = 2
         shap = Shapes.O
+        self.view = view
+        
+        
+    }
+    
+    static public func clear(_ boxes: [[SCNNode]]) -> [[SCNNode]]{
+        for i in boxes{
+            for j in i {
+                j.geometry?.firstMaterial?.diffuse.contents = UIColor.clear
+                j.geometry?.firstMaterial?.diffuse.contents = UIImage(named: "box")
+                j.name = "empty"
+            }
+        }
+        return boxes
     }
     
     public func shiftToLeft(){
@@ -223,30 +248,30 @@ class TetrisEngine {
         case .O:
             print("OK")
             figure = [(20, 4), (20, 5), (19, 4), (19, 5)]
-            color = .yellow
+            color = TetrisEngine.colors[0]
         case .I:
             figure = [(20, 4),(19, 4), (18, 4), (17, 4)]
-            color = .blue
+            color = TetrisEngine.colors[1]
         case .S:
             figure = [(19, 4),(19, 5), (18, 3), (18, 4)]
-            color = .red
+            color = TetrisEngine.colors[2]
         case .Z:
             figure = [(19, 3),(19, 4), (18, 4), (18, 5)]
-            color = .green
+            color = TetrisEngine.colors[3]
         case .L:
             figure = [(20, 4),(19, 4), (18, 4), (18, 5)]
-            color = .orange
+            color = TetrisEngine.colors[4]
         case .J:
             figure = [(20, 4),(19, 4), (18, 4), (18, 3)]
-            color = .systemPink
+            color = TetrisEngine.colors[5]
         case .T:
             figure = [(20, 4),(20, 5), (20, 6), (19, 5)]
-            color = .purple
+            color = TetrisEngine.colors[6]
         }
         if boxes[figure[0].0][figure[0].1].name == "full" || boxes[figure[1].0][figure[1].1].name == "full" || boxes[figure[2].0][figure[2].1].name == "full" || boxes[figure[3].0][figure[3].1].name == "full"{
             print("Game over")
             print("Scope: " + String(scope))
-            
+            view.endGame(scope: scope, boxes[figure[0].0][figure[0].1].position)
             return
         }
         for cordinate in figure {
@@ -290,7 +315,6 @@ class TetrisEngine {
         }
     }
     
-    let colors = [UIColor.red, UIColor.blue, UIColor.cyan, UIColor.black, UIColor.yellow]
     
     @objc func fall(timer: Timer){
         print("Timer")
@@ -321,7 +345,7 @@ class TetrisEngine {
     }
     
     private func randomShapes() -> Shapes{
-        let a = Int.random(in: 3...6)
+        let a = Int.random(in: 0...6)
         return Shapes(rawValue: a)!
     }
 }
