@@ -15,6 +15,12 @@ class TetrisEngine {
     var color: UIColor = .yellow
     var speed: Float
     var timer: Timer?
+    var scope : Int = 0 {
+        didSet {
+            speed -= 0.04
+            print("new speed " + String(speed))
+        }
+    }
     var shap: Shapes
     
     init(_ boxes: [[SCNNode]] ) {
@@ -25,7 +31,7 @@ class TetrisEngine {
     }
     
     public func shiftToLeft(){
-        if figure[0].1 == 0 || figure[2].1 == 0{
+        if figure[0].1 == 0 || figure[2].1 == 0 || figure[1].1 == 0 || figure[3].1 == 0{
             return
         }
         for cordinate in figure {
@@ -48,7 +54,7 @@ class TetrisEngine {
     }
     
     public func shiftToRight(){
-        if figure[1].1 == 9 || figure[3].1 == 9{
+        if figure[1].1 == 9 || figure[3].1 == 9 || figure[0].1 == 9 || figure[2].1 == 9 {
             return
         }
         for cordinate in figure {
@@ -96,15 +102,92 @@ class TetrisEngine {
                 d.0 = b.0 - 2
             }
         case .S:
-            print("shap s turn")
+            if figure[0].1 ==  figure[1].1 - 1{
+                b.0 = a.0 + 1
+                b.1 = a.1
+                d.1 = a.1 + 1
+                d.0 = a.0
+                c.1 = d.1
+                c.0 = d.0 - 1
+            } else{
+                b.0 = a.0
+                b.1 = a.1 + 1
+                d.1 = a.1
+                d.0 = a.0 - 1
+                c.1 = d.1 - 1
+                c.0 = d.0 
+            }
         case .Z:
-            print("shap z turn")
+            if figure[0].1 ==  figure[1].1 - 1{
+                a.1 = b.1
+                a.0 = b.0 - 1
+                c.0 = b.0
+                c.1 = b.1 + 1
+                d.1 = c.1
+                d.0 = c.0 + 1
+            } else {
+                a.1 = b.1 - 1
+                a.0 = b.0
+                c.1 = b.1
+                c.0 = b.0 - 1
+                d.0 = c.0
+                d.1 = c.1 + 1
+            }
         case .L:
-            print("shap l turn")
+            if figure[0].0 == figure[1].0 + 1 {
+                a.0 = b.0
+                c.0 = b.0
+                a.1 = b.1 - 1
+                c.1 = b.1 + 1
+                d.1 = c.1
+                d.0 = b.0 + 1
+            } else {
+                a.0 = b.0 + 1
+                a.1 = b.1
+                c.0 = b.0 - 1
+                c.1 = b.1
+                d.0 = c.0
+                d.1 = c.1 + 1
+            }
         case .J:
-            print("shap j turn")
+            if figure[0].0 == figure[1].0 + 1 {
+                a.0 = b.0
+                c.0 = b.0
+                a.1 = b.1 - 1
+                c.1 = b.1 + 1
+                d.1 = c.1
+                d.0 = b.0 - 1
+            } else {
+                a.0 = b.0 + 1
+                a.1 = b.1
+                c.0 = b.0 - 1
+                c.1 = b.1
+                d.0 = c.0
+                d.1 = c.1 - 1
+            }
         case .T:
-            print("shap T turn")
+            if c.0 - 1 == d.0 {
+                a.1 = c.1
+                a.0 = c.0 - 1
+                b.1 = c.1
+                b.0 = c.0 + 1
+                d.0 = c.0
+                d.1 = c.1 + 1
+            } else if c.0  == d.0 {
+                a.0 = c.0
+                a.1 = c.1 + 1
+                b.0 = c.0
+                b.1 = c.1 - 1
+                d.1 = c.1
+                d.0 = c.0 + 1
+            } else {
+                a.0 = c.0
+                a.1 = c.1 + 1
+                b.0 = c.0
+                b.1 = c.1 - 1
+                d.1 = c.1
+                d.0 = c.0 - 1
+            }
         }
         for i in [a, b, c, d]{
             if i.1 < 0 || i.1 > 9 || i.0 > 20 || i.0 < 0 || boxes[i.0][i.1].name == "full"{
@@ -162,6 +245,8 @@ class TetrisEngine {
         }
         if boxes[figure[0].0][figure[0].1].name == "full" || boxes[figure[1].0][figure[1].1].name == "full" || boxes[figure[2].0][figure[2].1].name == "full" || boxes[figure[3].0][figure[3].1].name == "full"{
             print("Game over")
+            print("Scope: " + String(scope))
+            
             return
         }
         for cordinate in figure {
@@ -180,11 +265,11 @@ class TetrisEngine {
             for j in 0...9{
                 if (boxes[i][j].name != "full") {
                     flag = false
-                    print ("delete " + String(i))
                     break
                 }
             }
             if flag {
+                scope += 1
                 for j in i...19{
                     for k in 0...9{
                         if boxes[j+1][k].name == "full"{
@@ -236,7 +321,7 @@ class TetrisEngine {
     }
     
     private func randomShapes() -> Shapes{
-        let a = Int.random(in: 0...1)
+        let a = Int.random(in: 3...6)
         return Shapes(rawValue: a)!
     }
 }
