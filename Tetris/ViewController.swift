@@ -12,7 +12,7 @@ import ARKit
 class ViewController: UIViewController, ARSCNViewDelegate {
     
     @IBOutlet var sceneView: ARSCNView!
-    let koef: Float = 10
+    let koef: Float = 20
     
     var arr : [[SCNNode]] = [[]]
     
@@ -39,6 +39,11 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         tetris?.shiftToLeft()
     }
     
+    @objc func swipeToDown(sender: UISwipeGestureRecognizer){
+        print("down")
+        tetris?.shiftDown()
+    }
+    
    
     
     @objc func checkAction(sender : UITapGestureRecognizer) {
@@ -50,18 +55,30 @@ class ViewController: UIViewController, ARSCNViewDelegate {
         tetris?.start()
     }
     
+    @objc func swipeToUp(sender: UISwipeGestureRecognizer){
+        print("up")
+        tetris?.turn()
+    }
+
+    
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
         let swipeRight : UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(self.swipeToRight))
         let swipeLeft : UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(self.swipeToLeft))
+        let swipeDown : UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(self.swipeToDown))
+        let swipeUp : UISwipeGestureRecognizer = UISwipeGestureRecognizer(target: self, action: #selector(self.swipeToUp))
+        swipeUp.direction = UISwipeGestureRecognizer.Direction.up
+        swipeDown.direction = UISwipeGestureRecognizer.Direction.down
         swipeLeft.direction = UISwipeGestureRecognizer.Direction.left
         let gesture = UITapGestureRecognizer(target: self, action:  #selector(self.checkAction))
         sceneView.addGestureRecognizer(gesture)
         swipeRight.direction = UISwipeGestureRecognizer.Direction.right
         sceneView.addGestureRecognizer(swipeRight)
         sceneView.addGestureRecognizer(swipeLeft)
+        sceneView.addGestureRecognizer(swipeDown)
+        sceneView.addGestureRecognizer(swipeUp)
         
         // Set the view's delegate
         sceneView.delegate = self

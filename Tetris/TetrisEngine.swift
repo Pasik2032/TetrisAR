@@ -14,17 +14,26 @@ class TetrisEngine {
     var figure: [(Int, Int)]
     var color: UIColor = .yellow
     var speed: Float
+    var timer: Timer?
+    var shap: Shapes
     
     init(_ boxes: [[SCNNode]] ) {
         self.boxes = boxes
         figure = [(20, 4), (20, 5), (19, 4), (19, 5)]
-        speed = 2.0
+        speed = 2
+        shap = Shapes.O
     }
     
     public func shiftToLeft(){
         if figure[0].1 == 0 || figure[2].1 == 0{
             return
         }
+        for cordinate in figure {
+            if boxes[cordinate.0][cordinate.1 - 1].name == "full" {
+                return
+            }
+        }
+        
         for cordinate in figure {
             boxes[cordinate.0][cordinate.1].geometry?.firstMaterial?.diffuse.contents = UIColor.clear
             boxes[cordinate.0][cordinate.1].geometry?.firstMaterial?.diffuse.contents = UIImage(named: "box")
@@ -43,6 +52,11 @@ class TetrisEngine {
             return
         }
         for cordinate in figure {
+            if boxes[cordinate.0][cordinate.1 + 1].name == "full" {
+                return
+            }
+        }
+        for cordinate in figure {
             boxes[cordinate.0][cordinate.1].geometry?.firstMaterial?.diffuse.contents = UIColor.clear
             boxes[cordinate.0][cordinate.1].geometry?.firstMaterial?.diffuse.contents = UIImage(named: "box")
         }
@@ -55,10 +69,72 @@ class TetrisEngine {
         }
     }
     
+    public func turn(){
+
+        var a, b, c, d : (Int, Int)
+        a = figure[0]
+        b = figure[1]
+        c = figure[2]
+        d = figure[3]
+        switch shap {
+        case .O:
+            print("shap o turn")
+        case .I:
+            if figure[1].0 ==  figure[2].0 + 1{
+                a.0 = b.0
+                c.0 = b.0
+                c.1 = b.1 + 1
+                d.0 = b.0
+                d.1 = b.1 + 2
+                a.1 = b.1 - 1
+            } else {
+                a.1 = b.1
+                c.1 = b.1
+                d.1 = b.1
+                a.0 = b.0 + 1
+                c.0 = b.0 - 1
+                d.0 = b.0 - 2
+            }
+        case .S:
+            print("shap s turn")
+        case .Z:
+            print("shap z turn")
+        case .L:
+            print("shap l turn")
+        case .J:
+            print("shap j turn")
+        case .T:
+            print("shap T turn")
+        }
+        for i in [a, b, c, d]{
+            if i.1 < 0 || i.1 > 9 || i.0 > 20 || i.0 < 0 || boxes[i.0][i.1].name == "full"{
+                return
+            }
+        }
+        for cordinate in figure {
+            boxes[cordinate.0][cordinate.1].geometry?.firstMaterial?.diffuse.contents = UIColor.clear
+            boxes[cordinate.0][cordinate.1].geometry?.firstMaterial?.diffuse.contents = UIImage(named: "box")
+        }
+        figure[0] = a
+        figure[1] = b
+        figure[2] = c
+        figure[3] = d
+        for cordinate in figure {
+            boxes[cordinate.0][cordinate.1].geometry?.firstMaterial?.diffuse.contents = color
+            print(String(cordinate.0) + ":" + String(cordinate.1) + " draw")
+        }
+    }
+    
+    public func shiftDown(){
+       
+        timer?.invalidate()
+        timer = Timer.scheduledTimer(timeInterval: 0.02, target: self, selector: #selector(fall), userInfo: nil, repeats: true)
+    }
+    
     let semaphore = DispatchSemaphore(value: 1)
 
     public func start(){
-        let shap = randomShapes()
+        shap = randomShapes()
 
         switch shap {
         case .O:
@@ -91,9 +167,42 @@ class TetrisEngine {
         for cordinate in figure {
             boxes[cordinate.0][cordinate.1].geometry?.firstMaterial?.diffuse.contents = color
         }
-        let timer = Timer.scheduledTimer(timeInterval: TimeInterval(speed), target: self, selector: #selector(fall), userInfo: nil, repeats: true)
+        timer = Timer.scheduledTimer(timeInterval: TimeInterval(speed), target: self, selector: #selector(fall), userInfo: nil, repeats: true)
         print("test")
         
+    }
+    
+    func deleteRow(){
+        var i = 1
+        while i <= 20 {
+//        for i in 1...20{
+            var flag = true
+            for j in 0...9{
+                if (boxes[i][j].name != "full") {
+                    flag = false
+                    print ("delete " + String(i))
+                    break
+                }
+            }
+            if flag {
+                for j in i...19{
+                    for k in 0...9{
+                        if boxes[j+1][k].name == "full"{
+                            boxes[j][k].geometry?.firstMaterial?.diffuse.contents = UIColor.clear
+                            boxes[j][k].geometry?.firstMaterial?.diffuse.contents = UIColor.orange
+                            boxes[j][k].name = "full"
+                        } else {
+                            boxes[j][k].geometry?.firstMaterial?.diffuse.contents = UIColor.clear
+                            boxes[j][k].geometry?.firstMaterial?.diffuse.contents = UIImage(named: "box")
+                            boxes[j][k].name = "empty"
+                        }
+                    }
+                    
+                }
+                i -= 1
+            }
+            i += 1
+        }
     }
     
     let colors = [UIColor.red, UIColor.blue, UIColor.cyan, UIColor.black, UIColor.yellow]
@@ -102,12 +211,12 @@ class TetrisEngine {
         print("Timer")
         for cordinate in figure {
             if (cordinate.0 - 1 == 0 || boxes[cordinate.0 - 1][cordinate.1].name == "full"){
-                
                 timer.invalidate()
                 print("new")
                 for cor in figure {
                     boxes[cor.0][cor.1].name = "full"
                 }
+                deleteRow()
                 start()
                 return
             }
@@ -127,7 +236,7 @@ class TetrisEngine {
     }
     
     private func randomShapes() -> Shapes{
-        let a = Int.random(in: 1...6)
+        let a = Int.random(in: 0...1)
         return Shapes(rawValue: a)!
     }
 }
