@@ -271,7 +271,7 @@ class TetrisEngine {
         if boxes[figure[0].0][figure[0].1].name == "full" || boxes[figure[1].0][figure[1].1].name == "full" || boxes[figure[2].0][figure[2].1].name == "full" || boxes[figure[3].0][figure[3].1].name == "full"{
             print("Game over")
             print("Scope: " + String(scope))
-            view.endGame(scope: scope, boxes[figure[0].0][figure[0].1].position)
+            view.endGame(scope: scope)
             return
         }
         for cordinate in figure {
