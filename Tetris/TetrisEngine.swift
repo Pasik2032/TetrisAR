@@ -10,19 +10,28 @@ import ARKit
 
 class TetrisEngine {
     
-    private static let colors : [UIColor] = [
-        UIColor(red:1.00, green:0.23, blue:0.19, alpha:1.0),
-        UIColor(red:1.00, green:0.18, blue:0.33, alpha:1.0),
-        UIColor(red:1.00, green:0.58, blue:0.00, alpha:1.0),
-        UIColor(red:1.00, green:0.80, blue:0.00, alpha:1.0),
-        UIColor(red:0.35, green:0.34, blue:0.84, alpha:1.0),
-        UIColor(red:0.20, green:0.67, blue:0.86, alpha:1.0),
-        UIColor(red:0.56, green:0.56, blue:0.58, alpha:1.0)]
+//    private static let colors = [
+//        UIColor(red:1.00, green:0.23, blue:0.19, alpha:1.0),
+//        UIColor(red:1.00, green:0.18, blue:0.33, alpha:1.0),
+//        UIColor(red:1.00, green:0.58, blue:0.00, alpha:1.0),
+//        UIColor(red:1.00, green:0.80, blue:0.00, alpha:1.0),
+//        UIColor(red:0.35, green:0.34, blue:0.84, alpha:1.0),
+//        UIColor(red:0.20, green:0.67, blue:0.86, alpha:1.0),
+//        UIColor(red:0.56, green:0.56, blue:0.58, alpha:1.0)]
+    
+    private static let colors = [
+        UIImage(named: "yellow"),
+        UIImage(named: "cyan"),
+        UIImage(named: "red"),
+        UIImage(named: "blue"),
+        UIImage(named: "orange"),
+        UIImage(named: "pink"),
+        UIImage(named: "gray")]
     
     
     let boxes: [[SCNNode]]
     var figure: [(Int, Int)]
-    var color: UIColor = .yellow
+    var color = UIImage(named: "yellow")
     var speed: Float
     var timer: Timer?
     public var scope : Int = 0 {
@@ -299,7 +308,7 @@ class TetrisEngine {
                     for k in 0...9{
                         if boxes[j+1][k].name == "full"{
                             boxes[j][k].geometry?.firstMaterial?.diffuse.contents = UIColor.clear
-                            boxes[j][k].geometry?.firstMaterial?.diffuse.contents = UIColor.orange
+                            boxes[j][k].geometry?.firstMaterial?.diffuse.contents = TetrisEngine.colors[Int.random(in: 0...6)]
                             boxes[j][k].name = "full"
                         } else {
                             boxes[j][k].geometry?.firstMaterial?.diffuse.contents = UIColor.clear

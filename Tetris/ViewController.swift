@@ -198,7 +198,8 @@ class ViewController: UIViewController, ARSCNViewDelegate {
             var count  = 0
             while count < 10{
                 count += 1
-                let geometry = SCNBox(width: CGFloat(anchor.extent.x)/CGFloat(koef), height: CGFloat(anchor.extent.x)/CGFloat(koef), length: CGFloat(anchor.extent.x)/CGFloat(koef), chamferRadius: 0)
+                let size = CGFloat(anchor.extent.x)/CGFloat(koef)
+                let geometry = SCNBox(width: size, height: size, length: size, chamferRadius: 0)
                 let floorNode = SCNNode(geometry: geometry)
                 floorNode.position = SCNVector3(x: length, y: height, z: anchor.center.z)
                 floorNode.geometry?.firstMaterial?.isDoubleSided = true
