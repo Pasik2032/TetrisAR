@@ -15,7 +15,7 @@ class ViewController: UIViewController, ARSCNViewDelegate {
     
     @IBOutlet var sceneView: ARSCNView!
     // the size of the field depends (inversely proportional)
-    let koef: Float = 20
+    let koef: Float = 15
     
     // array with cubes
     var arr : [[SCNNode]] = [[]]

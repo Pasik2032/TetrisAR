@@ -7,7 +7,7 @@
 
 import Foundation
 
-protocol TetrisView{
+protocol TetrisView {
     func endGame(scope: Int)
     func editScore(str: String)
 }
